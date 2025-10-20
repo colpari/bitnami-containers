@@ -1,0 +1,23 @@
+docker-build:
+  image: docker:latest
+  stage: build
+  services:
+    - name: docker:dind
+      command: ["--tls=false"]
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  # if we have a branch and tag name plus a top level directory (link) named TARGET_IMAGE
+  # build the Dockerfile in TARGET_IMAGE and push it as PROJECT/BRANCH:TAG
+  script:
+    - cd TARGET_IMAGE
+    - docker build --pull -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_TAG" .
+    - docker push "$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_TAG"
+
+  rules:
+    - if: ($CI_COMMIT_TAG != "" && $CI_COMMIT_REF_NAME != "main")
+      exists:
+        - TARGET_IMAGE/Dockerfile
