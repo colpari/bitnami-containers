@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+
+# we expect a directory named 'gitlab-ci-build' and we build a docker image
+# named/tagged by the subdirectory name (may be xxx:yyy) for each subdirectory
+
+cd colpari-gitlab-images
+
+for DIR in *
+do
+	cd "$DIR"
+	docker build --pull -t "$CI_REGISTRY_IMAGE/$DIR" .
+	docker push "$CI_REGISTRY_IMAGE/$DIR"
+	cd -
+done
