@@ -10,6 +10,7 @@ cd colpari-gitlab-images
 for DIR in *
 do
 	echo "building '$DIR'"
-	docker build --pull -t "$CI_REGISTRY_IMAGE/$DIR" "$DIR"
+	ls -la "$DIR"
+	docker build --pull -t "$CI_REGISTRY_IMAGE/$DIR" -f "$DIR/Dockerfile" "$DIR"
 	docker push "$CI_REGISTRY_IMAGE/$DIR"
 done
