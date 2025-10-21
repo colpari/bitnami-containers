@@ -16,4 +16,5 @@ docker-build:
     - ./colpari-build
 
   rules:
-    - exists: colpari-gitlab-images
+    - exists:
+      - colpari-gitlab-images
